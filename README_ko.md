@@ -99,9 +99,11 @@
 
 [WSL2와 Anaconda 설치 설명 영상](https://youtu.be/fba9Zhsukqw)
 
-Docker에서 실행은 [Docker를 사용](docker_vcclient/README_ko.md)을 참고해 서버를 구동하세요.
+### 설정 가이드:
 
-Anaconda 가상 환경에서 실행은 [서버 개발자용 문서](README_dev_ko.md)를 참고해 서버를 구동하세요.
+- **Docker:** [Docker를 사용](docker_vcclient/README_ko.md)을 참고해 서버를 구동하세요.
+- **Anaconda (일반):** [서버 개발자용 문서](README_dev_ko.md)를 참고해 서버를 구동하세요.
+- **Linux와 AMD GPU (ROCm):** [AMD ROCm 설정 가이드](tutorials/tutorial_anaconda_amd_rocm.md)를 참조하여 PyTorch ROCm 지원을 설정하세요.
 
 # 문제 해결법
 
