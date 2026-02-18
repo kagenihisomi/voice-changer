@@ -100,12 +100,19 @@ cd ~/Documents/voicechanger/voice-changer/server
 pip install -r requirements.txt
 ```
 
-**Note:** The `requirements.txt` file specifies `torch==2.0.1`, but since you've already installed PyTorch with ROCm support, pip will skip reinstalling it if your PyTorch version is compatible. If you encounter version conflicts, you can install the other dependencies individually by temporarily removing the torch line:
+**Note:** The `requirements.txt` file specifies `torch==2.0.1`, but ROCm PyTorch versions have different version strings (e.g., `2.0.1+rocm6.0`). This version string difference may cause pip to report conflicts or attempt reinstallation. If you encounter any version conflicts, you can use one of these alternatives:
 
+**Option A: Skip torch in requirements.txt**
 ```bash
-# Alternative if you get version conflicts:
+# Install all dependencies except torch/torchaudio
+grep -v "^torch" requirements.txt > requirements_no_torch.txt
+pip install -r requirements_no_torch.txt
+```
+
+**Option B: Force install without checking dependencies**
+```bash
 pip install -r requirements.txt --no-deps
-pip install --no-deps uvicorn==0.21.1 pyOpenSSL==23.1.1 numpy==1.23.5 torchaudio==2.0.2 resampy==0.4.2 python-socketio==5.8.0 fastapi==0.95.1 python-multipart==0.0.6 scipy==1.10.1 matplotlib==3.7.1 websockets==11.0.2 faiss-cpu==1.7.3 torchcrepe==0.0.18 librosa==0.9.1 gin==0.1.6 gin_config==0.5.0 einops==0.6.0 local_attention==1.8.5 sounddevice==0.4.6 dataclasses_json==0.5.7 onnxsim==0.4.28 torchfcpe==0.0.3
+# Then install any missing non-torch dependencies individually if needed
 ```
 
 ## Start the server
