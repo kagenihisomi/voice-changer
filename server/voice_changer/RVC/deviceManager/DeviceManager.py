@@ -76,6 +76,7 @@ class DeviceManager(object):
         if self.forceTensor:
             return False
 
+        is_amd = False
         try:
             gpuName = torch.cuda.get_device_name(id).upper()
             
@@ -84,6 +85,7 @@ class DeviceManager(object):
             if "AMD" in gpuName or "RADEON" in gpuName:
                 # AMD 6000 series and newer support half precision well
                 # This includes 6800XT, 6900XT, 7000 series, etc.
+                is_amd = True
                 return True
             
             # NVIDIA GPU checks
@@ -104,9 +106,10 @@ class DeviceManager(object):
                 return False
         except Exception as e:
             # ROCm may not support get_device_capability in the same way
-            # If we can't get capability, but we detected AMD GPU above, it's likely fine
+            # For AMD GPUs, we already returned True above
+            # For NVIDIA GPUs, if we can't get capability, assume it's not supported
             print(f"[Voice Changer] Could not get device capability: {e}")
-            return True
+            return False
 
         return True
 
