@@ -8,8 +8,11 @@ Please read this FAQ before asking or making a bug report.
 - Extract your .zip to a new location and avoid folders with space or specials characters (also avoid long file paths)
 - If you don't have a GPU or have a too old GPU, try using the [Colab Version](https://colab.research.google.com/github/w-okada/voice-changer/blob/master/Realtime_Voice_Changer_on_Colab.ipynb) instead
 
-### 1. AMD GPU don't appear or not working
+### 1. AMD GPU don't appear or not working (Windows)
 > Please download the **latest DirectML version**, use the **f0 det. rmvpe_onnx** and .ONNX models only! (.pth models do not work properly, use the "Export to ONNX" it can take a while)
+
+### 1b. AMD GPU support on Linux
+> For Linux users with AMD GPUs, you can use ROCm for much better performance with PyTorch. See the [AMD ROCm setup guide](../tutorials/tutorial_anaconda_amd_rocm.md) for detailed instructions on building and running with PyTorch ROCm support.
 
 ### 2. NVidia GPU don't appear or not working
 > Make sure that the [NVidia CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) drivers are installed on your PC and up-to-date
