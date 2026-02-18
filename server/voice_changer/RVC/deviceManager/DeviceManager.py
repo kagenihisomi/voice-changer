@@ -76,7 +76,6 @@ class DeviceManager(object):
         if self.forceTensor:
             return False
 
-        is_amd = False
         try:
             gpuName = torch.cuda.get_device_name(id).upper()
             
@@ -85,7 +84,6 @@ class DeviceManager(object):
             if "AMD" in gpuName or "RADEON" in gpuName:
                 # AMD 6000 series and newer support half precision well
                 # This includes 6800XT, 6900XT, 7000 series, etc.
-                is_amd = True
                 return True
             
             # NVIDIA GPU checks
