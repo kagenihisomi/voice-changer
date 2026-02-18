@@ -102,7 +102,7 @@ class DeviceManager(object):
             cap = torch.cuda.get_device_capability(id)
             if cap[0] < 7:  # コンピューティング機能が7以上の場合half precisionが使えるとされている（が例外がある？T500とか）
                 return False
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             # ROCm may not support get_device_capability in the same way
             # For AMD GPUs, we already returned True above
             # For NVIDIA GPUs, if we can't get capability, assume it's not supported
