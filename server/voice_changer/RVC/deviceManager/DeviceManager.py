@@ -36,9 +36,15 @@ class DeviceManager(object):
     def getOnnxExecutionProvider(self, gpu: int):
         availableProviders = onnxruntime.get_available_providers()
         devNum = torch.cuda.device_count()
-        if gpu >= 0 and "CUDAExecutionProvider" in availableProviders and devNum > 0:
-            if gpu < devNum:  # ひとつ前のif文で弾いてもよいが、エラーの解像度を上げるため一段下げ。
-                return ["CUDAExecutionProvider"], [{"device_id": gpu}]
+        
+        if gpu >= 0 and devNum > 0:
+            if gpu < devNum:
+                # Check for ROCMExecutionProvider first (AMD GPUs)
+                if "ROCMExecutionProvider" in availableProviders:
+                    return ["ROCMExecutionProvider"], [{"device_id": gpu}]
+                # Fall back to CUDAExecutionProvider (works with both CUDA and ROCm)
+                elif "CUDAExecutionProvider" in availableProviders:
+                    return ["CUDAExecutionProvider"], [{"device_id": gpu}]
             else:
                 print("[Voice Changer] device detection error, fallback to cpu")
                 return ["CPUExecutionProvider"], [
@@ -50,14 +56,14 @@ class DeviceManager(object):
                 ]
         elif gpu >= 0 and "DmlExecutionProvider" in availableProviders:
             return ["DmlExecutionProvider"], [{"device_id": gpu}]
-        else:
-            return ["CPUExecutionProvider"], [
-                {
-                    "intra_op_num_threads": 8,
-                    "execution_mode": onnxruntime.ExecutionMode.ORT_PARALLEL,
-                    "inter_op_num_threads": 8,
-                }
-            ]
+        
+        return ["CPUExecutionProvider"], [
+            {
+                "intra_op_num_threads": 8,
+                "execution_mode": onnxruntime.ExecutionMode.ORT_PARALLEL,
+                "inter_op_num_threads": 8,
+            }
+        ]
 
     def setForceTensor(self, forceTensor: bool):
         self.forceTensor = forceTensor
@@ -72,6 +78,15 @@ class DeviceManager(object):
 
         try:
             gpuName = torch.cuda.get_device_name(id).upper()
+            
+            # Check for AMD GPUs (ROCm support)
+            # AMD GPUs with ROCm generally support half precision
+            if "AMD" in gpuName or "RADEON" in gpuName:
+                # AMD 6000 series and newer support half precision well
+                # This includes 6800XT, 6900XT, 7000 series, etc.
+                return True
+            
+            # NVIDIA GPU checks
             if (
                 ("16" in gpuName and "V100" not in gpuName)
                 or "P40" in gpuName.upper()
@@ -83,9 +98,15 @@ class DeviceManager(object):
             print(e)
             return False
 
-        cap = torch.cuda.get_device_capability(id)
-        if cap[0] < 7:  # コンピューティング機能が7以上の場合half precisionが使えるとされている（が例外がある？T500とか）
-            return False
+        try:
+            cap = torch.cuda.get_device_capability(id)
+            if cap[0] < 7:  # コンピューティング機能が7以上の場合half precisionが使えるとされている（が例外がある？T500とか）
+                return False
+        except Exception as e:
+            # ROCm may not support get_device_capability in the same way
+            # If we can't get capability, but we detected AMD GPU above, it's likely fine
+            print(f"[Voice Changer] Could not get device capability: {e}")
+            return True
 
         return True
 
