@@ -1,6 +1,8 @@
-# Voice Changer for AMD GPUs under Linux
+# Voice Changer Build and Run Guide for AMD GPUs with ROCm (Linux)
 
 ## Introduction
+
+This guide explains how to **build and run** the Voice Changer application with PyTorch ROCm support on Linux for AMD GPUs.
 
 At the moment, there are significant challenges in using machine learning solutions with an AMD GPU under Windows due to the lack of driver support. While AMD has released ROCm for newer GPUs, there is still no MIOpen release for Windows. Without MIOpen, there won't be a PyTorch release. DirectML is currently the only hardware-independent solution, but it offers poor performance and requires ONNX models that cannot load an index.
 
@@ -30,10 +32,10 @@ chmod u+x Anaconda3-xxx-Linux-x86_64.sh
 ```
 
 ## Setup Environment
-Now create a new environment, download the voice changer, and set up the dependencies. First create the new environment using conda and specify a Python version. Python 3.10.9 works well with ROCm 7.2 - for other versions check the PyTorch documentation:
+Now create a new environment, download the voice changer, and set up the dependencies. First create the new environment using conda and specify a Python version. Python 3.10 is recommended and works well with recent ROCm versions - for specific compatibility, check the [PyTorch documentation](https://pytorch.org/get-started/locally/):
 
 ```bash
-conda create --name voicechanger python=3.10.9
+conda create --name voicechanger python=3.10
 ```
 
 Activate the environment to install dependencies within it:
@@ -53,34 +55,64 @@ git clone https://github.com/w-okada/voice-changer.git
 
 ## Install Dependencies
 
-After downloading the repository, install all dependencies. Start with PyTorch for ROCm. AMD provides a [guide](https://rocm.docs.amd.com/projects/radeon/en/latest/docs/install/install-pytorch.html) for installing the correct PyTorch version, which is updated regularly. Begin by downloading Torch and Torchvision because the other steps are handled automatically when creating the conda environment:
+After downloading the repository, install all dependencies. Start with PyTorch for ROCm. AMD provides a [guide](https://rocm.docs.amd.com/projects/radeon/en/latest/docs/install/install-pytorch.html) for installing the correct PyTorch version, which is updated regularly.
+
+### Option 1: Install PyTorch via pip (Recommended - Easier)
+
+The easiest way to install PyTorch with ROCm support is using pip. PyTorch now provides pre-built ROCm packages that can be installed directly:
 
 ```bash
+# Install PyTorch with ROCm support (adjust ROCm version as needed)
+# Check https://pytorch.org/get-started/locally/ for the latest command
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.0
+```
+
+**Note:** The ROCm version in the URL (e.g., `rocm6.0`) should match your installed ROCm version. Common versions include:
+- `rocm6.0` for ROCm 6.0
+- `rocm6.1` for ROCm 6.1
+- `rocm5.7` for ROCm 5.7
+
+Check your ROCm version with:
+```bash
+rocm-smi --showproductname
+```
+
+### Option 2: Manual Wheel Installation (Alternative)
+
+If you prefer to manually download and install specific wheel files, you can do so from AMD's repository:
+
+```bash
+# Example for ROCm 5.7 (adjust versions based on your setup)
 # The versions of the Wheels can vary based on your GPU and the current ROCm release
 wget https://repo.radeon.com/rocm/manylinux/rocm-rel-5.7/torch-2.0.1%2Brocm5.7-cp310-cp310-linux_x86_64.whl
 wget https://repo.radeon.com/rocm/manylinux/rocm-rel-5.7/torchvision-0.15.2%2Brocm5.7-cp310-cp310-linux_x86_64.whl
-```
 
-Your directory should now look like this:
-
-```bash
-$ ls
-torch-2.0.1+rocm5.7-cp310-cp310-linux_x86_64.whl
-torchvision-0.15.2+rocm5.7-cp310-cp310-linux_x86_64.whl
-voice-changer
-```
-
-Now, install PyTorch within the environment:
-
-```bash
+# Then install:
 pip3 install --force-reinstall torch-2.0.1+rocm5.7-cp310-cp310-linux_x86_64.whl torchvision-0.15.2+rocm5.7-cp310-cp310-linux_x86_64.whl 
 ```
+
+### Install Additional Dependencies
 
 To run the voice changer, install additional dependencies using pip. Navigate to the server directory and use pip to install the requirements.txt file:
 
 ```bash
 cd ~/Documents/voicechanger/voice-changer/server
 pip install -r requirements.txt
+```
+
+**Note:** The `requirements.txt` file specifies `torch==2.0.1`, but ROCm PyTorch versions have different version strings (e.g., `2.0.1+rocm6.0`). This version string difference may cause pip to report conflicts or attempt reinstallation. If you encounter any version conflicts, you can use one of these alternatives:
+
+**Option A: Skip torch in requirements.txt**
+```bash
+# Install all dependencies except torch/torchaudio
+grep -v "^torch" requirements.txt > requirements_no_torch.txt
+pip install -r requirements_no_torch.txt
+```
+
+**Option B: Force install without checking dependencies**
+```bash
+pip install -r requirements.txt --no-deps
+# Then install any missing non-torch dependencies individually if needed
 ```
 
 ## Start the server

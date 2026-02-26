@@ -97,11 +97,11 @@ Clone this repository and use it. Setting up WSL2 is essential for Windows. Addi
 
 [Explanation video on installing WSL2 and Anaconda](https://youtu.be/fba9Zhsukqw)
 
-To run docker, see [start docker](docker_vcclient/README_en.md).
+### Setup Instructions:
 
-To run on Anaconda venv, see [server developer's guide](README_dev_en.md)
-
-To run on Linux using an AMD GPU, see [setup guide linux](tutorials/tutorial_anaconda_amd_rocm.md)
+- **Docker:** See [start docker](docker_vcclient/README_en.md)
+- **Anaconda (General):** See [server developer's guide](README_dev_en.md)  
+- **Linux with AMD GPU (ROCm):** See [AMD ROCm setup guide](tutorials/tutorial_anaconda_amd_rocm.md) for PyTorch with ROCm support
 
 
 # Software Signing

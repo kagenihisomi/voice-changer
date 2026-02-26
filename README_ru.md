@@ -89,11 +89,11 @@
 
 [Видео-инструкция по установке WSL2 и Anaconda](https://youtu.be/fba9Zhsukqw)
 
-Для запуска Docker смотрите [start docker](docker_vcclient/README_en.md).
+### Инструкции по установке:
 
-Для запуска на Anaconda venv смотрите [руководство разработчика](README_dev_ru.md).
-
-Для запуска на Linux с AMD GPU смотрите [руководство](tutorials/tutorial_anaconda_amd_rocm.md).
+- **Docker:** Смотрите [start docker](docker_vcclient/README_en.md)
+- **Anaconda (общее):** Смотрите [руководство разработчика](README_dev_ru.md)
+- **Linux с AMD GPU (ROCm):** Смотрите [руководство по настройке AMD ROCm](tutorials/tutorial_anaconda_amd_rocm.md) для PyTorch с поддержкой ROCm
 
 # Подпись программного обеспечения
 
