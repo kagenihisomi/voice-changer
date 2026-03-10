@@ -5,8 +5,11 @@ import torch
 import librosa
 from logger.saver import Saver
 from logger import utils
-from torch import autocast
-from torch.cuda.amp import GradScaler
+try:
+    from torch.amp import autocast, GradScaler
+except ImportError:
+    from torch import autocast
+    from torch.cuda.amp import GradScaler
 
 def test(args, model, vocoder, loader_test, saver):
     print(' [*] testing...')

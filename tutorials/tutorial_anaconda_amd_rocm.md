@@ -6,9 +6,19 @@ At the moment, there are significant challenges in using machine learning soluti
 
 Fortunately AMD has good driver support under Linux, and with ROCm, you can utilize the CUDA implementation of the voice changer, resulting in a significant performance improvement. You'll be able to use standard models, including index files. While Linux is not typically associated with gaming, tools like [Steam Proton](https://www.protondb.com/), [Lutris](https://lutris.net/), and [Wine](https://www.winehq.org/) enable you to play most games on Linux.
 
+**Recent Updates:**
+- The codebase now includes improved AMD GPU support with automatic detection of AMD/Radeon GPUs
+- Half-precision (FP16) support is automatically enabled for AMD 6000 series and newer (including 6800XT, 6900XT, 7900XTX)
+- PyTorch 2.0+ compatibility improvements for better ROCm integration
+
 **Benchmark with Radeon RX 7900 XTX:**
 - DirectML: Chunk 112 with Extra 8192 (using rmvpe_onnx)
 - CUDA: Chunk 48 with Extra 131072 (using rvmpe)
+
+**Supported AMD GPUs:**
+- AMD Radeon RX 6000 series (6800, 6800XT, 6900XT, etc.)
+- AMD Radeon RX 7000 series (7900XTX, 7900XT, etc.)
+- Other AMD GPUs with ROCm support
 
 ## Prerequisites
 

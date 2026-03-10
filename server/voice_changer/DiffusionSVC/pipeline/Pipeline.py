@@ -1,7 +1,10 @@
 from typing import Any
 import torch
 import torch.nn.functional as F
-from torch.cuda.amp import autocast
+try:
+    from torch.amp import autocast
+except ImportError:
+    from torch.cuda.amp import autocast
 from Exceptions import (
     DeviceCannotSupportHalfPrecisionException,
     DeviceChangingException,

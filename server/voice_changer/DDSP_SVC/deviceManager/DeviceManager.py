@@ -35,6 +35,15 @@ class DeviceManager(object):
 
         try:
             gpuName = torch.cuda.get_device_name(id).upper()
+            
+            # Check for AMD GPUs (ROCm support)
+            # AMD GPUs with ROCm generally support half precision
+            if "AMD" in gpuName or "RADEON" in gpuName:
+                # AMD 6000 series and newer support half precision well
+                # This includes 6800XT, 6900XT, 7000 series, etc.
+                return True
+            
+            # NVIDIA GPU checks
             if (
                 ("16" in gpuName and "V100" not in gpuName)
                 or "P40" in gpuName.upper()
@@ -44,6 +53,17 @@ class DeviceManager(object):
                 return False
         except Exception as e:
             print(e)
+            return False
+
+        try:
+            cap = torch.cuda.get_device_capability(id)
+            if cap[0] < 7:
+                return False
+        except (RuntimeError, AttributeError) as e:
+            # ROCm may not support get_device_capability in the same way
+            # For AMD GPUs, we already returned True above
+            # For NVIDIA GPUs, if we can't get capability, assume it's not supported
+            print(f"[Voice Changer] Could not get device capability: {e}")
             return False
 
         return True
